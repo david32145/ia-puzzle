@@ -3,6 +3,12 @@ from typing import List, Tuple
 Matrix = List[List[int]]
 Position = Tuple[int, int]
 
+_GOAL_STATE = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, None]
+]
+
 # Definition before use
 class Puzzle:
     pass
@@ -43,14 +49,21 @@ class Puzzle:
             available_movements.append(((line, column + 1), "LEFT"))
         return available_movements
 
-    def move(self, action):
-        (position, movement) = action
+    def move(self, movement):
+        (position, _) = movement
         blank_position = self.blank_position
         (line, column) = blank_position
         (nLine, nColumn) = position
         self.state[line][column] = self.state[nLine][nColumn]
         self.state[nLine][nColumn] = None
         self.blank_position = position
+
+    @property
+    def is_goal(self):
+        return self.state == _GOAL_STATE
+
+    def pprint(self):
+        print(self.__str__())
 
     def __str__(self):
         str_x = ""
@@ -84,7 +97,7 @@ class Puzzle:
                     return False
                 if discovery_numbers[state[i][j] - 1]:
                     return False
-                discovery_numbers[state[i][j] - 1]
+                discovery_numbers[state[i][j] - 1] = True
         return True
                 
 
