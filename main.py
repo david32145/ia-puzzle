@@ -1,4 +1,5 @@
-from models.puzzle import Puzzle, BreadthFirstSearch
+from models.puzzle import Puzzle
+from models.bfs import BreadthFirstSearch
 
 puzzle = Puzzle([
     [1, 3, 4],
@@ -6,8 +7,15 @@ puzzle = Puzzle([
     [5, 8, 7]
 ])
 
+print("Initial state")
 print(puzzle)
-print("========================")
-
 puzzleBFS = BreadthFirstSearch(puzzle)
-puzzleBFS.search()
+movements = puzzleBFS.search()
+print("Finish search")
+
+final_puzzle = puzzle
+for movement in movements:
+    final_puzzle = puzzle.clone()
+    final_puzzle.move(movement)
+
+final_puzzle.pprint()
