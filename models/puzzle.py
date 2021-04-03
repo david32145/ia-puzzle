@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from collections import deque
 
 Matrix = List[List[int]]
 Position = Tuple[int, int]
@@ -8,10 +9,6 @@ _GOAL_STATE = [
     [4, 5, 6],
     [7, 8, None]
 ]
-
-# Definition before use
-class Puzzle:
-    pass
 
 class Puzzle:
     blank_position: Position
@@ -64,6 +61,10 @@ class Puzzle:
 
     def pprint(self):
         print(self.__str__())
+        
+    # Criando uma 'chave' para indexar o estado do tabuleiro no conjunto de nós visitados:
+    def key_set(self):
+        return ''.join(str(ele) for sub in self.state for ele in sub)
 
     def __str__(self):
         str_x = ""
@@ -97,10 +98,48 @@ class Puzzle:
                     return False
                 if discovery_numbers[state[i][j] - 1]:
                     return False
-                discovery_numbers[state[i][j] - 1] = True
+                discovery_numbers[state[i][j] - 1]
         return True
                 
 
     @staticmethod
     def _is_not_list(obj):
         return not isinstance(obj, list)
+    
+class BreadthFirstSearch:
+    def __init__(self, puzzle):        
+        self.start_state = puzzle
+        
+    def search(self): 
+        # Para armazenar um tipo de 'chave' dos nós visitados:
+        visitedNodes = set()
+        
+        queue = deque([self.start_state])
+        
+        while queue:
+            currentNode = queue.popleft()
+            visitedNodes.add(currentNode.key_set())
+
+            if currentNode.is_goal:
+                print("ACHIEVED GOAL STATE:")
+                print(currentNode)
+                
+                return True
+            
+            expandingNodes = []
+            
+            # Gerando os nós filhos com as possibilidades de movimento:
+            for moviment in currentNode.get_available_movements():
+                newNode = currentNode.clone()
+                newNode.move(moviment)
+                expandingNodes.append(newNode)
+            
+            # Processo de geração dos nós, para a gente mostrar no dia da apresentação:
+            for node in expandingNodes:
+                print(node)
+            
+            # Verificando se os nós expandidos já foram acessados:
+            for expandedNode in expandingNodes:
+                if expandedNode.key_set() not in visitedNodes:
+                    queue.append(expandedNode)
+                    visitedNodes.add(expandedNode.key_set())
