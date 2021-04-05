@@ -10,6 +10,8 @@ _GOAL_STATE = [
     [7, 8, None]
 ]
 
+_RIGHT_POSITIONS = [None, (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (3, 0), (3, 1)]
+
 class Puzzle:
     blank_position: Position
     state = Matrix
@@ -62,9 +64,39 @@ class Puzzle:
     def pprint(self):
         print(self.__str__())
         
-    # Criando uma 'chave' para indexar o estado do tabuleiro no conjunto de nós visitados:
     def key_set(self):
         return ''.join(str(ele) for sub in self.state for ele in sub)
+
+    def number_part_of_place(self):
+        number = 0
+        if self.state[0][0] == 1:
+            number += 1
+        if self.state[0][1] == 2:
+            number += 1
+        if self.state[0][2] == 3:
+            number += 1
+        if self.state[1][0] == 4:
+            number += 1
+        if self.state[1][1] == 5:
+            number += 1
+        if self.state[1][2] == 6:
+            number += 1
+        if self.state[2][0] == 7:
+            number += 1
+        if self.state[2][1] == 8:
+            number += 1
+        return number
+
+    def distance_to_goal(self):
+        distance = 0
+        for i in range(3):
+            for j in range(3):
+                current_value = self.state[i][j]
+                if current_value is None:
+                    continue
+                (i2, j2) = _RIGHT_POSITIONS[current_value]
+                distance += (abs(i - i2) + abs(j - j2))
+        return distance
 
     def __str__(self):
         str_x = ""
